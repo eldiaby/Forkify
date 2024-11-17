@@ -590,10 +590,9 @@ var _webImmediateJs = require("core-js/modules/web.immediate.js");
 var _iconsSvg = require("url:../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 var _runtime = require("regenerator-runtime/runtime");
-var _readonlyDeepD = require("./../../node_modules/type-fest/source/readonly-deep.d");
-var _readonlyDeepDDefault = parcelHelpers.interopDefault(_readonlyDeepD);
-var _emoji = require("./../../node_modules/@parcel/reporter-cli/src/emoji");
 const recipeContainer = document.querySelector('.recipe');
+// import data from './../../node_modules/type-fest/source/readonly-deep.d';
+// import { error } from './../../node_modules/@parcel/reporter-cli/src/emoji';
 const timeout = function(s) {
     return new Promise(function(_, reject) {
         setTimeout(function() {
@@ -616,10 +615,11 @@ const renderSpinner = function(parentEl) {
 };
 const showRecipe = async function() {
     try {
+        const id = window.location.hash.slice(1);
+        if (!id) return;
         // Loading recipe
         renderSpinner(recipeContainer);
-        const res = await fetch(// `https://forkify-api.herokuapp.com/api/v2/recipes/664c8f193e7aa067e94e863b`
-        `https://forkify-api.herokuapp.com/api/v2/recipes/664c8f193e7aa067e94e880c`);
+        const res = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}`);
         const data = await res.json();
         if (!res.ok) throw new Error(`${data.message} (${res.status})`);
         let { recipe } = data.data;
@@ -730,13 +730,14 @@ ${ing.description}
         window.alert(error);
     }
 };
-showRecipe();
+// window.addEventListener('hashchange', showRecipe);
+// window.addEventListener('load', showRecipe);
+[
+    'hashchange',
+    'load'
+].forEach((ev)=>window.addEventListener(ev, showRecipe));
 
-},{"./../../node_modules/type-fest/source/readonly-deep.d":"6X6Z1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./../../node_modules/@parcel/reporter-cli/src/emoji":"fmnwt","url:../img/icons.svg":"loVOp","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ"}],"6X6Z1":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","core-js/modules/web.immediate.js":"49tUX","url:../img/icons.svg":"loVOp","regenerator-runtime/runtime":"dXNgZ"}],"gkKU3":[function(require,module,exports,__globalThis) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -765,218 +766,6 @@ exports.export = function(dest, destName, get) {
         get: get
     });
 };
-
-},{}],"fmnwt":[function(require,module,exports,__globalThis) {
-// @flow strict-local
-// From https://github.com/sindresorhus/is-unicode-supported/blob/8f123916d5c25a87c4f966dcc248b7ca5df2b4ca/index.js
-// This package is ESM-only so it has to be vendored
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "progress", ()=>progress);
-parcelHelpers.export(exports, "success", ()=>success);
-parcelHelpers.export(exports, "error", ()=>error);
-parcelHelpers.export(exports, "warning", ()=>warning);
-parcelHelpers.export(exports, "info", ()=>info);
-parcelHelpers.export(exports, "hint", ()=>hint);
-parcelHelpers.export(exports, "docs", ()=>docs);
-var process = require("144b5e279ab14956");
-function isUnicodeSupported() {
-    if (process.platform !== 'win32') return true; // Linux console (kernel)
-    return Boolean(undefined) || Boolean(undefined) || // Windows Terminal
-    false || // ConEmu and cmder
-    false || false || false;
-}
-const supportsEmoji = isUnicodeSupported();
-const progress = supportsEmoji ? "\u23F3" : "\u221E";
-const success = supportsEmoji ? "\u2728" : "\u221A";
-const error = supportsEmoji ? "\uD83D\uDEA8" : "\xd7";
-const warning = supportsEmoji ? "\u26A0\uFE0F" : "\u203C";
-const info = supportsEmoji ? "\u2139\uFE0F" : "\u2139";
-const hint = supportsEmoji ? "\uD83D\uDCA1" : "\u2139";
-const docs = supportsEmoji ? "\uD83D\uDCDD" : "\u2139";
-
-},{"144b5e279ab14956":"d5jf4","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"d5jf4":[function(require,module,exports,__globalThis) {
-// shim for using process in browser
-var process = module.exports = {};
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-var cachedSetTimeout;
-var cachedClearTimeout;
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout() {
-    throw new Error('clearTimeout has not been defined');
-}
-(function() {
-    try {
-        if (typeof setTimeout === 'function') cachedSetTimeout = setTimeout;
-        else cachedSetTimeout = defaultSetTimout;
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') cachedClearTimeout = clearTimeout;
-        else cachedClearTimeout = defaultClearTimeout;
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-})();
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) //normal enviroments in sane situations
-    return setTimeout(fun, 0);
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch (e) {
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch (e) {
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) //normal enviroments in sane situations
-    return clearTimeout(marker);
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e) {
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e) {
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) return;
-    draining = false;
-    if (currentQueue.length) queue = currentQueue.concat(queue);
-    else queueIndex = -1;
-    if (queue.length) drainQueue();
-}
-function drainQueue() {
-    if (draining) return;
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-    var len = queue.length;
-    while(len){
-        currentQueue = queue;
-        queue = [];
-        while(++queueIndex < len)if (currentQueue) currentQueue[queueIndex].run();
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-process.nextTick = function(fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) for(var i = 1; i < arguments.length; i++)args[i - 1] = arguments[i];
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) runTimeout(drainQueue);
-};
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function() {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-function noop() {}
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-process.listeners = function(name) {
-    return [];
-};
-process.binding = function(name) {
-    throw new Error('process.binding is not supported');
-};
-process.cwd = function() {
-    return '/';
-};
-process.chdir = function(dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() {
-    return 0;
-};
-
-},{}],"loVOp":[function(require,module,exports,__globalThis) {
-module.exports = require("9bcc84ee5d265e38").getBundleURL('hWUTQ') + "icons.dfd7a6db.svg" + "?" + Date.now();
-
-},{"9bcc84ee5d265e38":"lgJ39"}],"lgJ39":[function(require,module,exports,__globalThis) {
-"use strict";
-var bundleURL = {};
-function getBundleURLCached(id) {
-    var value = bundleURL[id];
-    if (!value) {
-        value = getBundleURL();
-        bundleURL[id] = value;
-    }
-    return value;
-}
-function getBundleURL() {
-    try {
-        throw new Error();
-    } catch (err) {
-        var matches = ('' + err.stack).match(/(https?|file|ftp|(chrome|moz|safari-web)-extension):\/\/[^)\n]+/g);
-        if (matches) // The first two stack frames will be this function and getBundleURLCached.
-        // Use the 3rd one, which will be a runtime in the original bundle.
-        return getBaseURL(matches[2]);
-    }
-    return '/';
-}
-function getBaseURL(url) {
-    return ('' + url).replace(/^((?:https?|file|ftp|(chrome|moz|safari-web)-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
-}
-// TODO: Replace uses with `new URL(url).origin` when ie11 is no longer supported.
-function getOrigin(url) {
-    var matches = ('' + url).match(/(https?|file|ftp|(chrome|moz|safari-web)-extension):\/\/[^/]+/);
-    if (!matches) throw new Error('Origin not found');
-    return matches[0];
-}
-exports.getBundleURL = getBundleURLCached;
-exports.getBaseURL = getBaseURL;
-exports.getOrigin = getOrigin;
 
 },{}],"49tUX":[function(require,module,exports,__globalThis) {
 'use strict';
@@ -2229,7 +2018,45 @@ module.exports = function(scheduler, hasTimeArg) {
     } : scheduler;
 };
 
-},{"aa6765693e58a0fe":"9fY7y","a68ecfcbf29c46f6":"148ka","7087588d33667af2":"l3Kyn","864edee099e8affb":"888a9","3a3a5a2cfab86f21":"lApyY","cff2c830bdea4f24":"RsFXo","58a74f00cee1ac64":"b9O3D"}],"dXNgZ":[function(require,module,exports,__globalThis) {
+},{"aa6765693e58a0fe":"9fY7y","a68ecfcbf29c46f6":"148ka","7087588d33667af2":"l3Kyn","864edee099e8affb":"888a9","3a3a5a2cfab86f21":"lApyY","cff2c830bdea4f24":"RsFXo","58a74f00cee1ac64":"b9O3D"}],"loVOp":[function(require,module,exports,__globalThis) {
+module.exports = require("9bcc84ee5d265e38").getBundleURL('hWUTQ') + "icons.dfd7a6db.svg" + "?" + Date.now();
+
+},{"9bcc84ee5d265e38":"lgJ39"}],"lgJ39":[function(require,module,exports,__globalThis) {
+"use strict";
+var bundleURL = {};
+function getBundleURLCached(id) {
+    var value = bundleURL[id];
+    if (!value) {
+        value = getBundleURL();
+        bundleURL[id] = value;
+    }
+    return value;
+}
+function getBundleURL() {
+    try {
+        throw new Error();
+    } catch (err) {
+        var matches = ('' + err.stack).match(/(https?|file|ftp|(chrome|moz|safari-web)-extension):\/\/[^)\n]+/g);
+        if (matches) // The first two stack frames will be this function and getBundleURLCached.
+        // Use the 3rd one, which will be a runtime in the original bundle.
+        return getBaseURL(matches[2]);
+    }
+    return '/';
+}
+function getBaseURL(url) {
+    return ('' + url).replace(/^((?:https?|file|ftp|(chrome|moz|safari-web)-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
+}
+// TODO: Replace uses with `new URL(url).origin` when ie11 is no longer supported.
+function getOrigin(url) {
+    var matches = ('' + url).match(/(https?|file|ftp|(chrome|moz|safari-web)-extension):\/\/[^/]+/);
+    if (!matches) throw new Error('Origin not found');
+    return matches[0];
+}
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+exports.getOrigin = getOrigin;
+
+},{}],"dXNgZ":[function(require,module,exports,__globalThis) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *

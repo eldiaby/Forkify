@@ -3,8 +3,8 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 const recipeContainer = document.querySelector('.recipe');
-import data from './../../node_modules/type-fest/source/readonly-deep.d';
-import { error } from './../../node_modules/@parcel/reporter-cli/src/emoji';
+// import data from './../../node_modules/type-fest/source/readonly-deep.d';
+// import { error } from './../../node_modules/@parcel/reporter-cli/src/emoji';
 
 const timeout = function (s) {
   return new Promise(function (_, reject) {
@@ -32,11 +32,13 @@ const renderSpinner = function (parentEl) {
 
 const showRecipe = async function () {
   try {
+    const id = window.location.hash.slice(1);
+
+    if (!id) return;
     // Loading recipe
     renderSpinner(recipeContainer);
     const res = await fetch(
-      // `https://forkify-api.herokuapp.com/api/v2/recipes/664c8f193e7aa067e94e863b`
-      `https://forkify-api.herokuapp.com/api/v2/recipes/664c8f193e7aa067e94e880c`
+      `https://forkify-api.herokuapp.com/api/v2/recipes/${id}`
     );
 
     const data = await res.json();
@@ -164,4 +166,7 @@ ${ing.description}
   }
 };
 
-showRecipe();
+// window.addEventListener('hashchange', showRecipe);
+// window.addEventListener('load', showRecipe);
+
+['hashchange', 'load'].forEach(ev => window.addEventListener(ev, showRecipe));
