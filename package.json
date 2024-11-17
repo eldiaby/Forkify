@@ -21,5 +21,9 @@
     "parcel": "^2.13.0",
     "process": "^0.11.10",
     "sass": "1.81.0"
+  },
+  "dependencies": {
+    "core-js": "^3.39.0",
+    "regenerator-runtime": "^0.14.1"
   }
 }
