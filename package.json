@@ -1,0 +1,25 @@
+{
+  "name": "forkify",
+  "version": "1.0.0",
+  "description": "Recipe application",
+  "scripts": {
+    "parcel:start": "parcel index.html",
+    "parcel:build": "parcel build index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eldiaby/Forkify-.git"
+  },
+  "author": "Eldiaby Hossny",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eldiaby/Forkify-/issues"
+  },
+  "homepage": "https://github.com/eldiaby/Forkify-#readme",
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.13.0",
+    "parcel": "^2.13.0",
+    "process": "^0.11.10",
+    "sass": "1.81.0"
+  }
+}
