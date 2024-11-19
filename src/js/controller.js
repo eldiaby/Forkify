@@ -1,14 +1,17 @@
 import * as module from './module.js';
 import recipeView from './views/recipeView.js';
+import searchView from './views/searchView.js';
+import resultsView from './views/resultsView.js';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
-const recipeContainer = document.querySelector('.recipe');
-// import data from './../../node_modules/type-fest/source/readonly-deep.d';
-// import { error } from './../../node_modules/@parcel/reporter-cli/src/emoji';
-
-// https://forkify-api.herokuapp.com/v2
+if (module.hot) {
+  module.hot.accept('./module.js', function () {
+    // Logic to update the module without reloading the whole page
+    console.log('Module updated!');
+  });
+}
 
 ///////////////////////////////////////
 
@@ -31,8 +34,28 @@ const controlRecipes = async function () {
   }
 };
 
+const contrlSearchResults = async function () {
+  try {
+    resultsView.renderSpinner();
+
+    // 1) Get search query
+    const query = searchView.getQuery();
+    if (!query) return;
+
+    // 2) Load search results
+    await module.loadSearchResults(query);
+
+    // 3) Render results
+    // console.log(module.state.search.result);
+    resultsView.render(module.state.search.result);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
+  searchView.addHandlerSearch(contrlSearchResults);
 };
 
 init();
