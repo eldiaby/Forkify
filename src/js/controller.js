@@ -16,11 +16,14 @@ const controlRecipes = async function () {
     if (!id) return;
     recipeView.renderSpinner();
 
-    // Loading recipe
+    // 1)Update results view to mark selected search result
+    resultsView.update(module.getSearchResultsPage());
+
+    // 2)Loading recipe
     await module.loadRecipe(id);
     const { recipe } = module.state;
 
-    // Rendering recipe
+    // 3)Rendering recipe
     recipeView.render(module.state.recipe);
   } catch (error) {
     // console.error(error);
@@ -64,7 +67,7 @@ const controlServings = function (newServings) {
   module.updateServings(newServings);
 
   // 2) Update the recipe view
-  recipeView.render(module.state.recipe);
+  recipeView.update(module.state.recipe);
 };
 
 const init = function () {

@@ -603,10 +603,12 @@ const controlRecipes = async function() {
         const id = window.location.hash.slice(1);
         if (!id) return;
         (0, _recipeViewJsDefault.default).renderSpinner();
-        // Loading recipe
+        // 1)Update results view to mark selected search result
+        (0, _resultsViewJsDefault.default).update(_moduleJs.getSearchResultsPage());
+        // 2)Loading recipe
         await _moduleJs.loadRecipe(id);
         const { recipe } = _moduleJs.state;
-        // Rendering recipe
+        // 3)Rendering recipe
         (0, _recipeViewJsDefault.default).render(_moduleJs.state.recipe);
     } catch (error) {
         // console.error(error);
@@ -641,7 +643,7 @@ const controlServings = function(newServings) {
     // 1) Update the recipe servings (in state)
     _moduleJs.updateServings(newServings);
     // 2) Update the recipe view
-    (0, _recipeViewJsDefault.default).render(_moduleJs.state.recipe);
+    (0, _recipeViewJsDefault.default).update(_moduleJs.state.recipe);
 };
 const init = function() {
     (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes);
@@ -2471,6 +2473,19 @@ class View {
         this._clear();
         this._parentElement.insertAdjacentHTML('afterbegin', markup);
     }
+    update(data) {
+        this._data = data;
+        const newMarkup = this._generateMarkup();
+        const DOMMarkup = document.createRange().createContextualFragment(newMarkup);
+        const currentDom = Array.from(this._parentElement.querySelectorAll('*'));
+        const newDom = Array.from(DOMMarkup.querySelectorAll('*'));
+        // Updates changed TEXT
+        newDom.forEach((ele, i)=>{
+            if (!ele.isEqualNode(currentDom[i]) && ele.firstChild.nodeValue.trim() !== '') currentDom[i].textContent = ele.textContent;
+            // Updates changed TEXT
+            if (!ele.isEqualNode(currentDom[i])) Array.from(ele.attributes).forEach((attr)=>currentDom[i].setAttribute(attr.name, attr.value));
+        });
+    }
     renderSpinner() {
         const markup = `
     <div class="spinner">
@@ -3138,9 +3153,10 @@ class ResultsView extends (0, _viewJsDefault.default) {
         return this._data.map(this._generateMarkupPreview).join('');
     }
     _generateMarkupPreview(result) {
+        const id = window.location.hash.slice(1);
         return `
        <li class="preview">
-            <a class="preview__link" href="#${result.id}">
+            <a class="preview__link ${result.id === id ? 'preview__link--active' : ''}" href="#${result.id}">
               <figure class="preview__fig">
                 <img src="${result.image}" alt="${result.title}" />
               </figure>
