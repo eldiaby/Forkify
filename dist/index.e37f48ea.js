@@ -657,7 +657,11 @@ const controlAddBookmark = function() {
     // 3) Render bookmarks
     (0, _bookmarkViewJsDefault.default).render(_moduleJs.state.bookmarks);
 };
+const controlBookmarks = function() {
+    (0, _bookmarkViewJsDefault.default).render(_moduleJs.state.bookmarks);
+};
 const init = function() {
+    (0, _bookmarkViewJsDefault.default).addHandlerRender(controlBookmarks);
     (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes);
     (0, _recipeViewJsDefault.default).addHandlerServings(controlServings);
     (0, _recipeViewJsDefault.default).addHandlerBookmark(controlAddBookmark);
@@ -2025,17 +2029,26 @@ const updateServings = function(newServings) {
     // Updating the servings with the new one
     state.recipe.servings = newServings;
 };
+const parsistBookmarks = function() {
+    localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks));
+};
 const addBookmark = function(recipe) {
     // add recipe to bookmark recipes array
     state.bookmarks.push(recipe);
     if (recipe.id === state.recipe.id) state.recipe.bookmark = true;
+    parsistBookmarks();
 };
 const deleteBookmark = function(id) {
     // Delete the recipe from bookmark
     const index = state.bookmarks.findIndex((el)=>el.id === id);
     state.bookmarks.splice(index, 1);
     if (id === state.recipe.id) state.recipe.bookmark = false;
+    parsistBookmarks();
 };
+const init = function() {
+    state.bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+};
+init();
 
 },{"./config.js":"k5Hzs","./helpers.js":"hGI1E","./../../node_modules/type-fest/source/readonly-deep.d":"6X6Z1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k5Hzs":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -3296,6 +3309,9 @@ class BookmarkView extends (0, _viewJsDefault.default) {
     _parentElement = document.querySelector('.bookmarks__list');
     _errorMessage = `No bookmarks yet. Find a nice recipe and bookmark it :).`;
     _message = ``;
+    addHandlerRender(handler) {
+        window.addEventListener('load', handler);
+    }
     _generateMarkup() {
         return this._data.map((bookmark)=>(0, _previewViewJsDefault.default).render(bookmark, false)).join(``);
     }
