@@ -3,13 +3,16 @@ import icons from 'url:../../img/icons.svg';
 export default class View {
   _data;
 
-  render(data) {
+  render(data, render = true) {
     if (!data || (Array.isArray(data) && data.length === 0))
       return this.renderError();
 
     this._data = data;
 
     const markup = this._generateMarkup();
+
+    if (!render) return markup;
+
     this._clear();
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
@@ -18,30 +21,30 @@ export default class View {
     this._data = data;
     const newMarkup = this._generateMarkup();
 
-    const DOMMarkup = document
-      .createRange()
-      .createContextualFragment(newMarkup);
-    const currentDom = Array.from(this._parentElement.querySelectorAll('*'));
-    const newDom = Array.from(DOMMarkup.querySelectorAll('*'));
+    const newDOM = document.createRange().createContextualFragment(newMarkup);
+    const newElements = Array.from(newDOM.querySelectorAll('*'));
+    const curElements = Array.from(this._parentElement.querySelectorAll('*'));
 
-    // Updates changed TEXT
-    newDom.forEach((ele, i) => {
-      if (
-        !ele.isEqualNode(currentDom[i]) &&
-        ele.firstChild.nodeValue.trim() !== ''
-      ) {
-        currentDom[i].textContent = ele.textContent;
-      }
+    newElements.forEach((newEl, i) => {
+      const curEl = curElements[i];
+      // console.log(curEl, newEl.isEqualNode(curEl));
 
       // Updates changed TEXT
-      if (!ele.isEqualNode(currentDom[i])) {
-        Array.from(ele.attributes).forEach(attr =>
-          currentDom[i].setAttribute(attr.name, attr.value)
-        );
+      if (
+        !newEl.isEqualNode(curEl) &&
+        newEl.firstChild?.nodeValue.trim() !== ''
+      ) {
+        // console.log('💥', newEl.firstChild.nodeValue.trim());
+        curEl.textContent = newEl.textContent;
       }
+
+      // Updates changed ATTRIBUES
+      if (!newEl.isEqualNode(curEl))
+        Array.from(newEl.attributes).forEach(attr =>
+          curEl.setAttribute(attr.name, attr.value)
+        );
     });
   }
-
   renderSpinner() {
     const markup = `
     <div class="spinner">
