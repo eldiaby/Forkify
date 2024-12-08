@@ -4,6 +4,8 @@ import searchView from './views/searchView.js';
 import resultsView from './views/resultsView.js';
 import paginationView from './views/paginationView.js';
 import bookmarkView from './views/bookmarkView.js';
+import addRecipeView from './views/addRecipeView.js';
+import { MOKEL_CLOSE_SEC } from './config.js';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -88,6 +90,34 @@ const controlBookmarks = function () {
   bookmarkView.render(module.state.bookmarks);
 };
 
+const controlAddRecipe = async function (newRecipe) {
+  try {
+    addRecipeView.renderSpinner();
+
+    // Uplaod recipe to the api
+    await module.uploadRecipe(newRecipe);
+
+    // 2) Render the recipe
+    recipeView.render(module.state.recipe);
+
+    // Show success message
+    addRecipeView.renderMessage();
+
+    // Change ID in URL
+    window.history.pushState(null, '', `#${module.state.recipe.id}`);
+
+    // Render bookmark view
+    bookmarkView.render(module.state.bookmarks);
+
+    // 3) Hide the form
+    setTimeout(() => {
+      addRecipeView.toggleWindow();
+    }, MOKEL_CLOSE_SEC * 1000);
+  } catch (error) {
+    addRecipeView.renderError(error);
+  }
+};
+
 const init = function () {
   bookmarkView.addHandlerRender(controlBookmarks);
   recipeView.addHandlerRender(controlRecipes);
@@ -95,6 +125,7 @@ const init = function () {
   recipeView.addHandlerBookmark(controlAddBookmark);
   searchView.addHandlerSearch(contrlSearchResults);
   paginationView.handlePaginationBtns(controlPaginationBtns);
+  addRecipeView.addHandlerUpload(controlAddRecipe);
 };
 
 init();
